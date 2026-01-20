@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Task, TaskDependency
-from .serializers import TaskSerializer, TaskDependencySerializer
+from .serializers import TaskSerializer, TaskDependencySerializer, GraphSerializer
 from .services.dependency_checker import DependencyChecker
 from .services.status_updater import StatusUpdater
 
@@ -113,3 +113,20 @@ class TaskViewSet(viewsets.ModelViewSet):
             )
         
         return super().destroy(request, *args, **kwargs)
+
+
+class DependencyGraphView(viewsets.ViewSet):
+    @action(detail=False, methods=['get'])
+    def graph(self, request):
+        """
+        GET /api/dependencies/graph/
+        """
+        tasks = Task.objects.all()
+        dependencies = TaskDependency.objects.all()
+        
+        serializer = GraphSerializer({
+            'tasks': tasks,
+            'dependencies': dependencies
+        })
+        
+        return Response(serializer.data)
