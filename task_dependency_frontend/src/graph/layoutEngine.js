@@ -35,7 +35,6 @@ export function calculateHierarchicalLayout(nodes, edges) {
   // BFS to assign levels
   while (queue.length > 0) {
     const currentId = queue.shift();
-    const currentLevel = levels.get(currentId);
     
     const dependents = dependedBy.get(currentId) || [];
     
