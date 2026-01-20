@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { api } from './services/api';
+import TaskList from './components/TaskList';
+import AddTaskForm from './components/AddTaskForm';
+import ErrorMessage from './components/ErrorMessage';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -54,6 +57,28 @@ function App() {
       }
     }
   };
+
+  const handleAddDependency = async (taskId, dependsOnId) => {
+    try {
+      await api.addDependency(taskId, dependsOnId);
+      await fetchTasks();
+    } catch (err) {
+      if (err.error) {
+        setError(err.error);
+      } else {
+        setError(err.message || 'Failed to add dependency');
+      }
+    }
+  };
+
+  const handleRemoveDependency = async (taskId, depId) => {
+    try {
+      await api.removeDependency(taskId, depId);
+      await fetchTasks();
+    } catch (err) {
+      setError(err.message || 'Failed to remove dependency');
+    }
+  };
   
   return (
     <div className="min-h-screen bg-gray-100">
@@ -62,12 +87,7 @@ function App() {
           Task Dependency Tracker
         </h1>
         
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex justify-between">
-            <span>{error}</span>
-            <button onClick={() => setError(null)} className="font-bold">×</button>
-          </div>
-        )}
+        <ErrorMessage message={error} onDismiss={() => setError(null)} />
         
         <div className="mb-6 flex gap-4">
           <button
@@ -92,12 +112,22 @@ function App() {
           </button>
         </div>
         
-        {loading ? (
-          <div className="text-center py-8">Loading...</div>
-        ) : activeView === 'list' ? (
-          <div className="bg-white rounded-lg shadow p-6">
-            <p className="text-gray-500">Task list view - coming in Step 10</p>
-            <p className="text-sm text-gray-400 mt-2">Tasks loaded: {tasks.length}</p>
+        {activeView === 'list' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <TaskList
+                tasks={tasks}
+                loading={loading}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+                onAddDependency={handleAddDependency}
+                onRemoveDependency={handleRemoveDependency}
+                onRefresh={fetchTasks}
+              />
+            </div>
+            <div>
+              <AddTaskForm onSubmit={handleCreateTask} />
+            </div>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow p-6">
