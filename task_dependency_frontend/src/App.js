@@ -4,6 +4,7 @@ import TaskList from './components/TaskList';
 import AddTaskForm from './components/AddTaskForm';
 import AddDependencyForm from './components/AddDependencyForm';
 import ErrorMessage from './components/ErrorMessage';
+import DependencyGraph from './graph/DependencyGraph';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -135,9 +136,7 @@ function App() {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow p-6">
-            <p className="text-gray-500">Dependency graph view - coming in Step 13</p>
-          </div>
+          <DependencyGraph tasks={tasks} onRefresh={fetchTasks} />
         )}
       </div>
     </div>
