@@ -87,3 +87,29 @@ class TaskViewSet(viewsets.ModelViewSet):
                 {"error": "Dependency not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+    
+    def destroy(self, request, *args, **kwargs):
+        """
+        DELETE /api/tasks/{id}/
+        Check for dependent tasks before deletion
+        """
+        task = self.get_object()
+        
+        # Check if other tasks depend on this
+        dependent_tasks = TaskDependency.objects.filter(
+            depends_on=task
+        ).select_related('task')
+        
+        if dependent_tasks.exists():
+            return Response(
+                {
+                    "error": "Cannot delete task with dependencies",
+                    "dependent_tasks": [
+                        {"id": dep.task.id, "title": dep.task.title}
+                        for dep in dependent_tasks
+                    ]
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        return super().destroy(request, *args, **kwargs)
