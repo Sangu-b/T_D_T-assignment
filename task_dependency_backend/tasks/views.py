@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import Task, TaskDependency
 from .serializers import TaskSerializer, TaskDependencySerializer
 from .services.dependency_checker import DependencyChecker
+from .services.status_updater import StatusUpdater
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -60,6 +61,9 @@ class TaskViewSet(viewsets.ModelViewSet):
                 {"error": "Dependency already exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+        # Update task status based on new dependency
+        StatusUpdater.update_task_status(task)
         
         serializer = TaskDependencySerializer(dependency)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
