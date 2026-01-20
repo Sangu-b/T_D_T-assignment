@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from './services/api';
 import TaskList from './components/TaskList';
 import AddTaskForm from './components/AddTaskForm';
+import AddDependencyForm from './components/AddDependencyForm';
 import ErrorMessage from './components/ErrorMessage';
 
 function App() {
@@ -127,6 +128,10 @@ function App() {
             </div>
             <div>
               <AddTaskForm onSubmit={handleCreateTask} />
+              <AddDependencyForm
+                tasks={tasks}
+                onAddDependency={handleAddDependency}
+              />
             </div>
           </div>
         ) : (
