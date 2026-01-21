@@ -2,6 +2,9 @@
 
 A Task Dependency Management System with React and Django that allows tasks to have dependencies on other tasks, detects circular dependencies, auto-updates task statuses, and visualizes dependency relationships.
 
+<img width="1919" height="1027" alt="image" src="https://github.com/user-attachments/assets/b7fd8efc-4781-4bc9-a9ab-71a2bf7d3220" />
+
+
 ## Features
 
 - **Task Management:** Create, update, and delete tasks with title, description, and status
